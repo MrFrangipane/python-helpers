@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pythonhelpers"
+description = "Bits of code used in most Python based projects"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+authors = [
+  { name = "Mr Frangipane", email = "contact@frangipane.me" }
+]
+maintainers = [
+  { name = "Mr Frangipane", email = "contact@frangipane.me" }
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3 :: Only",
+]
+keywords = ["python", "frangitron", "gui"]
+dynamic = ["version"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.hatch.metadata]
+allow-direct-references = true
