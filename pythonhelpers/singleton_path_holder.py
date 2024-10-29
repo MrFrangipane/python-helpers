@@ -3,7 +3,7 @@ import os.path
 from pythonhelpers.singleton_metaclass import SingletonMetaclass
 
 
-def make_singleton_path_holder(folder_name: str, max_depth: int = 5):
+def make_singleton_path_holder(folder_name: str, start_folder: str = os.getcwd(), max_depth: int = 5):
     """
     Creates a singleton path holder for a specified folder within a defined search depth.
 
@@ -14,7 +14,7 @@ def make_singleton_path_holder(folder_name: str, max_depth: int = 5):
     :raises FileExistsError: If multiple instances of the specified folder are found.
     """
 
-    def find_folder(folder_name: str, start_dir: str = os.getcwd()) -> list:
+    def find_folder() -> list:
         """
         Find a folder within max_depth levels above or below the starting directory.
 
@@ -47,14 +47,14 @@ def make_singleton_path_holder(folder_name: str, max_depth: int = 5):
                 matching_folders.append(os.path.join(parent_dir, folder_name))
             search_up(parent_dir, current_depth + 1, max_depth)
 
-        search_down(start_dir, 0, max_depth)
-        search_up(start_dir, 0, max_depth)
+        search_down(start_folder, 0, max_depth)
+        search_up(start_folder, 0, max_depth)
 
         matching_folders = list(set(matching_folders))
 
         return matching_folders
 
-    folders = find_folder(folder_name)
+    folders = find_folder()
     if len(folders) == 0:
         raise FileNotFoundError(f'Impossible to find the folder "{folder_name}"')
     elif len(folders) > 1:
