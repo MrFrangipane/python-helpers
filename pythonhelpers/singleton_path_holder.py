@@ -1,3 +1,4 @@
+# TODO: split path inspection and Singleton
 import os.path
 
 from pythonhelpers.singleton_metaclass import SingletonMetaclass
