@@ -1,3 +1,4 @@
+from tkinter import ttk
 import tkinter as tk
 
 
@@ -26,11 +27,8 @@ class Main(Widget):
 class Frame(Widget):
     def __init__(self, caption: str, parent: Widget, grid_row: int, grid_column: int):
         super().__init__()
-        self._tk_class = tk.Frame(
+        self._tk_class = ttk.Frame(
             parent.tk_class(),
-            padx=Frame.Padding,
-            pady=Frame.Padding,
-            relief=tk.RAISED,
             borderwidth=2
         )
         self._tk_class.grid(
@@ -39,7 +37,7 @@ class Frame(Widget):
             padx=Frame.Padding,
             pady=Frame.Padding
         )
-        self.label = tk.Label(
+        self.label = ttk.Label(
             self._tk_class,
             text=caption
         )
@@ -51,15 +49,14 @@ class Frame(Widget):
 class Slider(Widget):
     def __init__(self, caption, parent, range_, command, is_range_symmetric=False):
         super().__init__()
-        self.label = tk.Label(parent.tk_class(), text=caption)
+        self.label = ttk.Label(parent.tk_class(), text=caption)
         self.label.pack(pady=Slider.Padding)
 
         self.value = tk.IntVar()
-        self._tk_class = tk.Scale(
+        self._tk_class = ttk.Scale(
             parent.tk_class(),
             from_=-range_ if is_range_symmetric else 0,
             to=range_,
-            orient=tk.HORIZONTAL,
             length=Slider.Width,
             command=command,
             variable=self.value,
@@ -76,7 +73,7 @@ class Slider(Widget):
 class Button(Widget):
     def __init__(self, caption: str, parent: Widget, command):
         super().__init__()
-        self._tk_class = tk.Button(
+        self._tk_class = ttk.Button(
             parent.tk_class(),
             text=caption,
             command=command
