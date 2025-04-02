@@ -47,27 +47,56 @@ class Frame(Widget):
 
 
 class Slider(Widget):
+    _ValueClass = tk.DoubleVar
+
     def __init__(self, caption, parent: Widget, command, range_=None, is_range_symmetric=False, min_=0, max_=None):
         super().__init__()
-        self.label = ttk.Label(parent.tk_class(), text=caption)
-        self.label.pack(pady=Slider.Padding)
+        self._command = command
+        self._caption = caption
+        self._label = ttk.Label(parent.tk_class(), text=caption)
+        self._label.pack(pady=Slider.Padding)
 
-        self.value = tk.IntVar()
+        self.value = self._ValueClass()
         self._tk_class = ttk.Scale(
             parent.tk_class(),
             from_=-range_ if (range_ is not None and is_range_symmetric) else min_,
             to=range_ if max_ is None else max_,
             length=Slider.Width,
-            command=command,
+            command=self._on_command,
             variable=self.value,
         )
         self._tk_class.pack(pady=Slider.Padding)
+
+    def _on_command(self, value):
+        value = float(value)
+        self._label.config(text=f'{self._caption}: {value:.2f}')
+        self._command(value)
 
     def get(self):
         return self.value.get()
 
     def set(self, value):
+        value = float(value)
+        self._label.config(text=f'{self._caption}: {value:.2f}')
         self.value.set(value)
+
+
+class IntegerSlider(Slider):
+    _ValueClass = tk.IntVar
+
+    def _on_command(self, value):
+        value = int(float(value))
+        self._label.config(text=f'{self._caption}: {value}')
+        self._command(value)
+
+    def get(self):
+        return self.value.get()
+
+    def set(self, value):
+        value = int(float(value))
+        self._label.config(text=f'{self._caption}: {value}')
+        self.value.set(value)
+
 
 
 class Button(Widget):
