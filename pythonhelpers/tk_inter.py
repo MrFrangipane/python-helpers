@@ -47,7 +47,7 @@ class Frame(Widget):
 
 
 class Slider(Widget):
-    def __init__(self, caption, parent, range_, command, is_range_symmetric=False):
+    def __init__(self, caption, parent: Widget, command, range_=None, is_range_symmetric=False, min_=0, max_=None):
         super().__init__()
         self.label = ttk.Label(parent.tk_class(), text=caption)
         self.label.pack(pady=Slider.Padding)
@@ -55,8 +55,8 @@ class Slider(Widget):
         self.value = tk.IntVar()
         self._tk_class = ttk.Scale(
             parent.tk_class(),
-            from_=-range_ if is_range_symmetric else 0,
-            to=range_,
+            from_=-range_ if (range_ is not None and is_range_symmetric) else min_,
+            to=range_ if max_ is None else max_,
             length=Slider.Width,
             command=command,
             variable=self.value,
