@@ -49,9 +49,9 @@ class Frame(Widget):
 class Slider(Widget):
     _ValueClass = tk.DoubleVar
 
-    def __init__(self, caption, parent: Widget, command, range_=None, is_range_symmetric=False, min_=0, max_=None):
+    def __init__(self, caption, parent: Widget, on_change, range_=None, is_range_symmetric=False, min_=0, max_=None):
         super().__init__()
-        self._command = command
+        self._on_change = on_change
         self._caption = caption
         self._label = ttk.Label(parent.tk_class(), text=caption)
         self._label.pack(pady=Slider.Padding)
@@ -62,15 +62,15 @@ class Slider(Widget):
             from_=-range_ if (range_ is not None and is_range_symmetric) else min_,
             to=range_ if max_ is None else max_,
             length=Slider.Width,
-            command=self._on_command,
+            command=self._changed,
             variable=self.value,
         )
         self._tk_class.pack(pady=Slider.Padding)
 
-    def _on_command(self, value):
+    def _changed(self, value):
         value = float(value)
         self._label.config(text=f'{self._caption}: {value:.2f}')
-        self._command(value)
+        self._on_change(value)
 
     def get(self):
         return self.value.get()
@@ -84,10 +84,10 @@ class Slider(Widget):
 class IntegerSlider(Slider):
     _ValueClass = tk.IntVar
 
-    def _on_command(self, value):
+    def _changed(self, value):
         value = int(float(value))
         self._label.config(text=f'{self._caption}: {value}')
-        self._command(value)
+        self._on_change(value)
 
     def get(self):
         return self.value.get()
@@ -98,13 +98,15 @@ class IntegerSlider(Slider):
         self.value.set(value)
 
 
-
 class Button(Widget):
-    def __init__(self, caption: str, parent: Widget, command):
+    def __init__(self, caption: str, parent: Widget, on_press, on_release=None):
         super().__init__()
         self._tk_class = ttk.Button(
             parent.tk_class(),
-            text=caption,
-            command=command
+            text=caption
         )
+        self._tk_class.bind('<ButtonPress-1>', on_press)
+        if on_release is not None:
+            self._tk_class.bind('<ButtonRelease-1>', on_release)
+
         self._tk_class.pack(pady=Button.Padding)
