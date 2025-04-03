@@ -101,12 +101,23 @@ class IntegerSlider(Slider):
 class Button(Widget):
     def __init__(self, caption: str, parent: Widget, on_press, on_release=None):
         super().__init__()
+        self._on_pressed = on_press
+        self._on_release = on_release
         self._tk_class = ttk.Button(
             parent.tk_class(),
             text=caption
         )
-        self._tk_class.bind('<ButtonPress-1>', on_press)
-        if on_release is not None:
-            self._tk_class.bind('<ButtonRelease-1>', on_release)
+        self._tk_class.bind('<ButtonPress-1>', self._pressed)
+        self._tk_class.bind('<ButtonRelease-1>', self._released)
 
         self._tk_class.pack(pady=Button.Padding)
+        self.is_pressed = False
+
+    def _pressed(self, _):
+        self.is_pressed = True
+        self._on_pressed(_)
+
+    def _released(self, _):
+        self.is_pressed = False
+        if self._on_release is not None:
+            self._on_release(_)
