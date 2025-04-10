@@ -121,3 +121,31 @@ class Button(Widget):
         self.is_pressed = False
         if self._on_release is not None:
             self._on_release(_)
+
+
+class CheckBox(Widget):
+    def __init__(self, caption: str, parent: Widget, on_on, on_off=None):
+        super().__init__()
+        self._value = tk.BooleanVar()
+        self._on_on = on_on
+        self._on_off = on_off
+        self._tk_class = ttk.Checkbutton(
+            parent.tk_class(),
+            text=caption,
+            variable=self._value,
+            command=self._toggled
+        )
+        self._tk_class.pack(pady=Button.Padding)
+        self.is_pressed = False
+
+    def _toggled(self):
+        if self.checked():
+            self._on_on(True)
+        else:
+            self._on_off(False)
+
+    def checked(self):
+        return self._value.get()
+
+    def set(self, is_checked: bool):
+        self._value.set(is_checked)
