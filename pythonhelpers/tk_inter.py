@@ -3,7 +3,7 @@ import tkinter as tk
 
 
 class Widget:
-    Width = 200
+    Width = 300
     Padding = 5
 
     def __init__(self):
