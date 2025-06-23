@@ -48,11 +48,11 @@ class Reactive(metaclass=SingletonMetaclass):
         if not self._observers[observer.channel]:
             del self._observers[observer.channel]
 
-    def notify_observers(self, name, *args, **kwargs):
-        self._latest_calls[name] = LatestCall(args, kwargs)
+    def notify_observers(self, channel, *args, **kwargs):
+        self._latest_calls[channel] = LatestCall(args, kwargs)
 
-        if name not in self._observers:
+        if channel not in self._observers:
             return
 
-        for observer in self._observers[name]:
+        for observer in self._observers[channel]:
             observer.callback(*args, **kwargs)
