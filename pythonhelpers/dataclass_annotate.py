@@ -1,7 +1,7 @@
 from dataclasses import dataclass, fields, Field
 
 
-class DataclassAnnotateMetaclass(type):
+class _DataclassAnnotateMetaclass(type):
     """
     Metaclass for validating dataclass inheritance annotations.
 
@@ -33,6 +33,40 @@ class DataclassAnnotateMetaclass(type):
         return super().__call__(*args, **kwargs)
 
 
+class DataclassToFromBaseMixin:
+    """
+    Mixin for adding functionality to convert to and from a
+    base representation.
+    """
+    @staticmethod
+    def from_base(base):
+        raise NotImplemented
+
+    def to_base(self):
+        raise NotImplemented
+
+
+class DataclassAnnotateMixin(DataclassToFromBaseMixin, metaclass=_DataclassAnnotateMetaclass):
+    """
+    Mixin for validating dataclass inheritance annotations and adding
+    functionality to convert to and from a base representation.
+
+    Useful for DTOs that need to have the same fields as a parent domain's class
+
+    Its metaclass ensures that any dataclass inheriting from another dataclass
+    properly re-annotates fields to avoid inheriting identical field annotations
+    from the parent class. It validates the dataclass structure of the subclass
+    and its parent, ensuring only one base class is allowed and that fields
+    marking are correctly overridden in the subclass if they are present in
+    the parent dataclass.
+
+    This class also provides static and instance methods for converting dataclass
+    objects to a base representation and vice versa. The purpose is to enable
+    seamless transformations of dataclasses, often involving serialization,
+    deserialization, or compatibility with other formats.
+    """
+
+
 if __name__ == '__main__':
     @dataclass
     class TestBase:
@@ -40,7 +74,7 @@ if __name__ == '__main__':
         pierre: str
 
     @dataclass
-    class TestSub(TestBase, metaclass=DataclassAnnotateMetaclass):
+    class TestSub(TestBase, DataclassAnnotateMixin):
         jean: int
         pierre: str
         huges: bool
